@@ -1,131 +1,109 @@
 'use client';
 
 import React from 'react';
+import HeartExperience from '@/components/Guidance/HeartExperience';
 import Link from 'next/link';
-
-const ARTICLES = [
-  { id: 1, title: 'How to Master Anatomy for NEET PG 2025', category: 'Strategy', readTime: '5 min read' },
-  { id: 2, title: '10 High-Yield Topics in Physiology You Must Know', category: 'Tips', readTime: '8 min read' },
-  { id: 3, title: 'Balancing MBBS Final Year with PG Preparation', category: 'Life-Hacks', readTime: '6 min read' },
-  { id: 4, title: 'Microbiology: Systematic Approach to Bacteria', category: 'Subject-Focus', readTime: '10 min read' },
-];
 
 export default function Guidance() {
   return (
-    <div className="guidance-container">
-      <header className="guidance-header">
-        <h1 className="neon-glow">Guidance Portal</h1>
-        <p>Expert insights and strategies to crack NEET PG with a top rank.</p>
-      </header>
+    <div className="guidance-story-page">
+      {/* The 3D Engine Backdrop */}
+      <HeartExperience />
 
-      <div className="articles-section">
-        <h2>Latest Articles</h2>
-        <div className="articles-list">
-          {ARTICLES.map((article) => (
-            <div key={article.id} className="article-card glass">
-              <div className="article-meta">
-                <span className="category-tag">{article.category}</span>
-                <span className="read-time">{article.readTime}</span>
-              </div>
-              <h3>{article.title}</h3>
-              <p>Mastering this subject requires a blend of visual memory and conceptual clarity. In this guide, we break down the most important...</p>
-              <button className="read-btn">Read Article →</button>
-            </div>
-          ))}
-        </div>
+      {/* Persistence Overlay (Back Button) */}
+      <nav className="persistence-nav liquid-glass">
+        <Link href="/" className="back-link">← Home</Link>
+        <span className="current-subject">Module: Cardiology</span>
+      </nav>
+
+      {/* Floating Guidance UI (Scroll-driven typography is inside HeartExperience) */}
+      <div className="footer-scroll-tip">
+        <span>SCROLL TO DIVE DEEPER</span>
+        <div className="mouse-scroll-icon neon-border"></div>
       </div>
 
       <style jsx>{`
-        .guidance-container {
-          max-width: 1000px;
-          margin: 60px auto;
-          padding: 0 20px;
+        .guidance-story-page {
+          background-color: #000;
+          min-height: 100vh;
+          overflow-x: hidden;
         }
 
-        .guidance-header {
-          text-align: center;
-          margin-bottom: 80px;
-        }
-
-        .guidance-header h1 {
-          font-size: 3rem;
-          margin-bottom: 15px;
-        }
-
-        .guidance-header p {
-          color: hsl(var(--fg-secondary));
-          font-size: 1.2rem;
-        }
-
-        .articles-section h2 {
-          font-size: 2rem;
-          margin-bottom: 40px;
-        }
-
-        .articles-list {
+        .persistence-nav {
+          position: fixed;
+          top: 30px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 1000;
           display: flex;
-          flex-direction: column;
-          gap: 30px;
-        }
-
-        .article-card {
-          padding: 40px;
-          border-radius: var(--radius);
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-          transition: border-color 0.3s ease;
-          border: 1px solid transparent;
-        }
-
-        .article-card:hover {
-          border-color: hsla(var(--brand-primary) / 0.3);
-        }
-
-        .article-meta {
-          display: flex;
-          gap: 20px;
           align-items: center;
-        }
-
-        .category-tag {
-          padding: 4px 12px;
-          background: hsla(var(--brand-primary) / 0.1);
-          color: hsl(var(--brand-primary));
+          gap: 30px;
+          padding: 10px 25px;
           border-radius: 50px;
-          font-size: 0.8rem;
+        }
+
+        .back-link {
+          color: white;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 0.9rem;
+          opacity: 0.8;
+          transition: 0.3s;
+        }
+
+        .back-link:hover { opacity: 1; color: var(--brand-neon); }
+
+        .current-subject {
+          color: var(--brand-neon);
           font-weight: 700;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+          letter-spacing: 2px;
         }
 
-        .read-time {
-          font-size: 0.85rem;
-          color: hsl(var(--fg-secondary));
+        .footer-scroll-tip {
+          position: fixed;
+          bottom: 30px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          color: white;
+          opacity: 0.6;
         }
 
-        .article-card h3 {
-          font-size: 1.8rem;
-          line-height: 1.3;
+        .footer-scroll-tip span {
+          font-size: 0.65rem;
+          letter-spacing: 3px;
+          font-weight: 800;
         }
 
-        .article-card p {
-          color: hsl(var(--fg-secondary));
-          line-height: 1.6;
+        .mouse-scroll-icon {
+          width: 20px;
+          height: 35px;
+          border-radius: 20px;
+          position: relative;
+        }
+        .mouse-scroll-icon::before {
+          content: '';
+          position: absolute;
+          top: 5px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 4px;
+          height: 7px;
+          background: white;
+          border-radius: 10px;
+          animation: scrollDown 2s infinite;
         }
 
-        .read-btn {
-          background: transparent;
-          border: none;
-          color: hsl(var(--brand-primary));
-          font-weight: 700;
-          font-size: 1rem;
-          cursor: pointer;
-          align-self: flex-start;
-          margin-top: 10px;
-          padding: 0;
-        }
-
-        .read-btn:hover {
-          text-decoration: underline;
+        @keyframes scrollDown {
+          0% { opacity: 0; transform: translate(-50%, 0); }
+          50% { opacity: 1; transform: translate(-50%, 15px); }
+          100% { opacity: 0; transform: translate(-50%, 0); }
         }
       `}</style>
     </div>
