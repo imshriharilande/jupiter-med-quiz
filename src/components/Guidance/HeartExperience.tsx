@@ -51,11 +51,9 @@ function HeartModel({ scroll }: { scroll: any }) {
 
   return (
     <group ref={heartGroup}>
-      {/* Cinematic Rim Lighting Inside the Loop */}
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#ff0000" />
       <pointLight position={[-10, -10, -10]} intensity={1} color="#00ffff" />
 
-      {/* Dissectable Halves */}
       <group ref={leftHalf}>
         <Sphere args={[2, 64, 64]} position={[-0.5, 0, 0]} onClick={() => setSelection(PATHOLOGY_DATA.ventricles)} onPointerOver={() => setHovered('ventricles')} onPointerOut={() => setHovered(null)}>
           <MeshDistortMaterial 
@@ -75,7 +73,6 @@ function HeartModel({ scroll }: { scroll: any }) {
         </Sphere>
       </group>
 
-      {/* The Aorta Hotspot */}
       <Cylinder 
         ref={aorta}
         args={[0.6, 0.4, 4, 32]} 
@@ -92,7 +89,6 @@ function HeartModel({ scroll }: { scroll: any }) {
         />
       </Cylinder>
 
-      {/* Interactive Overlay UI */}
       {selection && (
         <Scroll html>
           <div className="pathology-modal glass liquid-glass">
@@ -110,7 +106,6 @@ function HeartModel({ scroll }: { scroll: any }) {
         </Scroll>
       )}
 
-      {/* Floating 3D Typography */}
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
         <Text
           position={[5, 4, -10]}
@@ -145,11 +140,11 @@ function HeartModel({ scroll }: { scroll: any }) {
         .info-section { margin-bottom: 20px; }
         .info-section label { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; opacity: 0.6; }
         .neon-cyan { color: #00f2ff; font-weight: 700; text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
-      `}</style>group>
+      `}</style>
+    </group>
   );
 }
 
-// 🏛️ The Main Canvas Container
 export default function HeartExperience() {
   return (
     <div className="heart-canvas-container">
