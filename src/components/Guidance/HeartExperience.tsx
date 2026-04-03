@@ -51,9 +51,11 @@ function HeartModel({ scroll }: { scroll: any }) {
 
   return (
     <group ref={heartGroup}>
+      {/* Cinematic Rim Lighting */}
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#ff0000" />
       <pointLight position={[-10, -10, -10]} intensity={1} color="#00ffff" />
 
+      {/* Dissectable Halves */}
       <group ref={leftHalf}>
         <Sphere args={[2, 64, 64]} position={[-0.5, 0, 0]} onClick={() => setSelection(PATHOLOGY_DATA.ventricles)} onPointerOver={() => setHovered('ventricles')} onPointerOut={() => setHovered(null)}>
           <MeshDistortMaterial 
@@ -73,6 +75,7 @@ function HeartModel({ scroll }: { scroll: any }) {
         </Sphere>
       </group>
 
+      {/* The Aorta Hotspot */}
       <Cylinder 
         ref={aorta}
         args={[0.6, 0.4, 4, 32]} 
@@ -89,6 +92,7 @@ function HeartModel({ scroll }: { scroll: any }) {
         />
       </Cylinder>
 
+      {/* Interactive Overlay UI */}
       {selection && (
         <Scroll html>
           <div className="pathology-modal glass liquid-glass">
@@ -106,6 +110,7 @@ function HeartModel({ scroll }: { scroll: any }) {
         </Scroll>
       )}
 
+      {/* Floating 3D Typography */}
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
         <Text
           position={[5, 4, -10]}
@@ -145,6 +150,7 @@ function HeartModel({ scroll }: { scroll: any }) {
   );
 }
 
+// 🏛️ The Main Canvas Container
 export default function HeartExperience() {
   return (
     <div className="heart-canvas-container">
