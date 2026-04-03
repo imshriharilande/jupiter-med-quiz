@@ -104,7 +104,7 @@ function HeartModel({ scroll }: { scroll: any }) {
             </div>
             <div className="info-section">
               <label>Diseases:</label>
-              <p className="neon-cyan">{selection.diseases}</p>
+              <p className="neon-cyan-text">{selection.diseases}</p>
             </div>
           </div>
         </Scroll>
@@ -121,31 +121,6 @@ function HeartModel({ scroll }: { scroll: any }) {
           {scroll.offset > 0.5 ? "DIVE IN" : "HUMAN HEART"}
         </Text>
       </Float>
-
-      <style jsx global>{`
-        .pathology-modal {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 400px;
-          padding: 40px;
-          border-radius: 24px;
-          color: white;
-          z-index: 1000;
-          pointer-events: auto;
-        }
-        .close-btn {
-          position: absolute;
-          top: 15px; right: 20px;
-          background: none; border: none; color: white;
-          font-size: 2rem; cursor: pointer;
-        }
-        .pathology-modal h2 { color: #00f2ff; margin-bottom: 20px; font-size: 2rem; }
-        .info-section { margin-bottom: 20px; }
-        .info-section label { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; opacity: 0.6; }
-        .neon-cyan { color: #00f2ff; font-weight: 700; text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
-      `}</style>
     </group>
   );
 }
@@ -189,41 +164,6 @@ export default function HeartExperience() {
           <Vignette eskil={false} offset={0.1} darkness={1} />
         </EffectComposer>
       </Canvas>
-
-      <style jsx>{`
-        .heart-canvas-container {
-          position: fixed;
-          top: 0; left: 0;
-          width: 100vw;
-          height: 100vh;
-          z-index: 0;
-        }
-        .story-layer {
-          width: 100vw;
-          pointer-events: none;
-        }
-        .story-vignette {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          color: white;
-          max-width: 800px;
-          margin: 0 auto;
-        }
-        .cinematic-title {
-          font-family: var(--font-brand);
-          font-size: 5rem;
-          margin-bottom: 20px;
-          background: linear-gradient(to bottom, #fff, #94a3b8);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-        @media (max-width: 900px) {
-          .cinematic-title { font-size: 3rem; }
-        }
-      `}</style>
     </div>
   );
 }
