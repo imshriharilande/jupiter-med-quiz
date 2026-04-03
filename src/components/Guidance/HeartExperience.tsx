@@ -158,7 +158,7 @@ export default function HeartExperience() {
           </Scroll>
         </ScrollControls>
 
-        <EffectComposer disableNormalPass>
+        <EffectComposer>
           <Bloom luminanceThreshold={1} luminanceSmoothing={0.9} height={300} />
           <Noise opacity={0.05} />
           <Vignette eskil={false} offset={0.1} darkness={1} />
