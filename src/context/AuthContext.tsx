@@ -14,20 +14,30 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper to determine the correct redirect URL
+const getRedirectURL = () => {
+  let url =
+    process.env.NEXT_PUBLIC_SITE_URL ?? // Custom site URL
+    process.env.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set by Vercel
+    'http://localhost:3000';
+  
+  // Ensure the URL starts with http/https
+  url = url.startsWith('http') ? url : `https://${url}`;
+  return url;
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // 2. Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -41,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: getRedirectURL(),
       },
     });
     if (error) throw error;

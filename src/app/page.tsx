@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Home() {
   const { user, signIn, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [showLogin, setShowLogin] = useState(false);
 
@@ -22,29 +24,77 @@ export default function Home() {
 
   return (
     <div className="container">
-      <nav className="glass">
-        <div className="logo neon-glow">JupiterMed Quiz</div>
+      <div className="glow-aura"></div>
+      <div className="glow-aura-secondary"></div>
+
+      <nav className="liquid-glass navbar">
+        <div className="brand neon-glow">JupiterMed</div>
         <div className="nav-links">
           <Link href="/quiz">Quizzes</Link>
           <Link href="/leaderboard">Leaderboard</Link>
           <Link href="/guidance">Guidance</Link>
+          <button className="theme-toggle" onClick={toggleTheme} title="Toggle Theme">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           {user ? (
             <div className="user-profile">
               <Link href="/dashboard" className="nav-user">Dashboard</Link>
-              <button onClick={signOut} className="logout-link">Logout</button>
+              <button onClick={signOut} className="logout-btn">Logout</button>
             </div>
           ) : (
-            <button className="login-btn neon-border" onClick={() => setShowLogin(true)}>Login</button>
+            <button className="login-btn neon-border" onClick={() => setShowLogin(true)}>Sign Up</button>
           )}
         </div>
       </nav>
 
+      <section className="hero-section">
+        <div className="hero-content">
+          <div className="social-proof">
+            <span className="stars">★★★★★</span>
+            Rated 4.9/5 by 2700+ medical students
+          </div>
+          <h1>Work smarter, <br/>achieve faster</h1>
+          <p className="hero-sub">
+            Effortlessly master your medical curriculum, collaborate with peers, and achieve your rank goals with our intuitive learning hub.
+          </p>
+          <div className="cta-group">
+            <button className="cta-primary pulse-primary" onClick={() => user ? window.location.href='/quiz' : setShowLogin(true)}>
+              Get Started Now <span className="icon">→</span>
+            </button>
+            {!user && <p className="cta-sub">Free for your first 50 MCQs. No credit card required.</p>}
+          </div>
+        </div>
+
+        <div className="hero-visual">
+          <div className="orb-container">
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="glassy-orb"
+            >
+              <source src="https://future.co/images/homepage/glassy-orb/orb-purple.webm" type="video/webm" />
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <footer className="logos-section">
+        <p>Trusted by students from India's top medical colleges</p>
+        <div className="logos-grid">
+          {['AIIMS', 'CMC', 'JIPMER', 'KGMU', 'MAMC'].map(logo => (
+            <div key={logo} className="logo-placeholder">{logo}</div>
+          ))}
+        </div>
+      </footer>
+
       {showLogin && (
-        <div className="modal-overlay">
-          <div className="login-modal glass neon-border">
+        <div className="modal-overlay" onClick={() => setShowLogin(false)}>
+          <div className="login-modal liquid-glass" onClick={e => e.stopPropagation()}>
             <button className="close-modal" onClick={() => setShowLogin(false)}>×</button>
-            <h3>Sign In to JupiterMed</h3>
-            <p>Enter your email to receive a magic login link.</p>
+            <h3>Join JupiterMed</h3>
+            <p>Master your medical career started here.</p>
             <form onSubmit={handleLogin}>
               <input 
                 type="email" 
@@ -53,299 +103,227 @@ export default function Home() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <button type="submit" className="cta-button">Send Link</button>
+              <button type="submit" className="cta-primary w-full">Send Magic Link</button>
             </form>
           </div>
         </div>
       )}
 
-      <section className="hero">
-        <div className="badge neon-border">🚀 {user ? 'Welcome Back!' : 'Next-Gen Learning'}</div>
-        <h1 className="neon-glow">Master Your Medical Career</h1>
-        <p>The high-performance learning ecosystem for MBBS & NEET PG aspirants. Topic-wise practice, live tests, and AI-driven insights.</p>
-        
-        <div className="hero-stats">
-          <div className="stat-card glass">
-            <h3>1,000+</h3>
-            <p>MCQs</p>
-          </div>
-          <div className="stat-card glass">
-            <h3>50+</h3>
-            <p>Active Quizzes</p>
-          </div>
-          <div className="stat-card glass">
-            <h3>10k+</h3>
-            <p>Students</p>
-          </div>
-        </div>
-
-        <Link href={user ? "/quiz" : "/quiz"} className="cta-button">
-          {user ? "Continue Your Practice" : "Start Free Quiz"}
-        </Link>
-      </section>
-
-      <section className="features-section">
-        <h2>Built for High-Performers</h2>
-        <div className="features-grid">
-          <div className="feature-card glass">
-            <div className="feature-icon">🧪</div>
-            <h3>Dynamic Engine</h3>
-            <p>Randomized questions with instant evaluations and detailed explanations.</p>
-          </div>
-          <div className="feature-card glass">
-            <div className="feature-icon">📊</div>
-            <h3>Real-time Stats</h3>
-            <p>Track your accuracy, weak subjects, and rank among peers globally.</p>
-          </div>
-          <div className="feature-card glass">
-            <div className="feature-icon">📅</div>
-            <h3>Live Events</h3>
-            <p>Participate in scheduled Grand Tests and win recognition (Future).</p>
-          </div>
-        </div>
-      </section>
-
       <style jsx>{`
         .container {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 0 20px;
-          background: radial-gradient(circle at top center, hsla(var(--brand-primary) / 0.05) 0%, transparent 70%);
-        }
-
-        nav {
           width: 100%;
-          max-width: 1200px;
-          margin-top: 20px;
-          padding: 15px 30px;
-          border-radius: var(--radius);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          z-index: 100;
+          max-width: 1600px;
+          margin: 0 auto;
+          position: relative;
         }
 
-        .logo {
+        .navbar {
+          position: sticky;
+          top: 30px;
+          width: fit-content;
+          margin: 0 auto;
+          padding: 10px 30px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          gap: 40px;
+          z-index: 1000;
+        }
+
+        .brand {
           font-size: 1.5rem;
-          font-weight: 700;
-          color: hsl(var(--brand-primary));
+          font-weight: 800;
+          color: var(--brand);
         }
 
         .nav-links {
           display: flex;
-          gap: 30px;
           align-items: center;
+          gap: 25px;
         }
 
-        .nav-links :global(a), .nav-user {
-          color: hsl(var(--fg-secondary));
-          font-weight: 500;
+        .nav-links :global(a) {
           text-decoration: none;
+          color: var(--fg);
+          font-weight: 500;
+          font-size: 0.95rem;
+          opacity: 0.8;
+          transition: 0.2s;
         }
 
-        .user-profile {
-          display: flex;
-          align-items: center;
-          gap: 20px;
+        .nav-links :global(a):hover {
+          opacity: 1;
         }
 
-        .logout-link {
-          background: transparent;
-          border: none;
-          color: hsl(var(--error));
-          font-weight: 600;
+        .theme-toggle {
+          background: rgba(255,255,255,0.1);
+          border: 1px solid var(--glass-stroke);
+          border-radius: 8px;
+          padding: 5px 10px;
           cursor: pointer;
-          font-size: 0.9rem;
+          font-size: 1.1rem;
         }
 
         .login-btn {
-          background: transparent;
-          color: hsl(var(--brand-primary));
-          border-radius: 50px;
-          padding: 8px 25px;
+          background: var(--brand);
+          color: white;
+          padding: 8px 20px;
+          border-radius: 12px;
           font-weight: 600;
+          border: none;
           cursor: pointer;
         }
 
-        /* Modal Styles */
+        .hero-section {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          align-items: center;
+          padding: 150px 60px;
+          min-height: 80vh;
+        }
+
+        .hero-content {
+          max-width: 700px;
+        }
+
+        .social-proof {
+          font-size: 0.9rem;
+          color: var(--fg-secondary);
+          margin-bottom: 25px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .stars {
+          color: #FF801E;
+          letter-spacing: 2px;
+        }
+
+        .hero-content h1 {
+          font-size: 75px;
+          line-height: 1.05;
+          letter-spacing: -2px;
+          margin-bottom: 30px;
+          font-weight: 800;
+        }
+
+        .hero-sub {
+          font-size: 1.15rem;
+          line-height: 1.6;
+          color: var(--fg-secondary);
+          margin-bottom: 50px;
+          letter-spacing: -0.5px;
+        }
+
+        .cta-primary {
+          background-color: var(--brand);
+          color: white;
+          padding: 18px 40px;
+          border-radius: 16px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          border: none;
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          cursor: pointer;
+          box-shadow: 0 10px 40px var(--brand-glow);
+        }
+
+        .cta-sub {
+          font-size: 0.85rem;
+          color: var(--fg-secondary);
+          margin-top: 15px;
+        }
+
+        .hero-visual {
+          position: relative;
+          display: flex;
+          justify-content: center;
+        }
+
+        .orb-container {
+          position: relative;
+          width: 600px;
+          height: 600px;
+        }
+
+        .glassy-orb {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          mix-blend-mode: screen;
+          filter: hue-rotate(-55deg) saturate(250%) brightness(1.2) contrast(1.1);
+          transform: scale(1.25);
+        }
+
+        .logos-section {
+          margin-top: 50px;
+          padding: 80px 60px;
+          text-align: center;
+        }
+
+        .logos-section p {
+          text-transform: uppercase;
+          font-size: 0.75rem;
+          letter-spacing: 2px;
+          font-weight: 700;
+          color: var(--fg-secondary);
+          margin-bottom: 40px;
+        }
+
+        .logos-grid {
+          display: flex;
+          justify-content: center;
+          gap: 100px;
+          opacity: 0.4;
+          filter: grayscale(1);
+        }
+
+        .logo-placeholder {
+          font-size: 1.1rem;
+          font-weight: 800;
+          letter-spacing: 1px;
+        }
+
+        /* Modal Overhaul */
         .modal-overlay {
           position: fixed;
           top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.8);
+          background: rgba(0,0,0,0.4);
+          backdrop-filter: blur(10px);
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 1000;
-          backdrop-filter: blur(5px);
+          z-index: 2000;
         }
 
         .login-modal {
-          padding: 40px;
           width: 100%;
-          max-width: 400px;
+          max-width: 450px;
+          padding: 50px;
+          border-radius: 24px;
           text-align: center;
-          position: relative;
-        }
-
-        .close-modal {
-          position: absolute;
-          top: 15px; right: 15px;
-          background: transparent;
-          border: none;
-          color: hsl(var(--fg-secondary));
-          font-size: 1.5rem;
-          cursor: pointer;
-        }
-
-        .login-modal h3 {
-          font-size: 1.8rem;
-          margin-bottom: 5px;
-        }
-
-        .login-modal p {
-          color: hsl(var(--fg-secondary));
-          margin-bottom: 30px;
         }
 
         .login-modal input {
           width: 100%;
-          padding: 15px;
-          border-radius: var(--radius);
-          background: hsla(var(--bg-secondary) / 0.5);
-          border: 1px solid hsla(var(--fg-primary) / 0.1);
-          color: white;
+          padding: 16px;
+          border-radius: 12px;
+          background: var(--bg);
+          border: 1px solid var(--glass-stroke);
+          color: var(--fg);
           margin-bottom: 20px;
           font-family: inherit;
         }
 
-        .hero {
-          margin-top: 80px;
-          text-align: center;
-          max-width: 900px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .badge {
-          padding: 6px 15px;
-          border-radius: 50px;
-          font-size: 0.8rem;
-          font-weight: 600;
-          margin-bottom: 25px;
-          background: hsla(var(--brand-primary) / 0.1);
-          color: hsl(var(--brand-primary));
-        }
-
-        .hero h1 {
-          font-size: 4.5rem;
-          margin-bottom: 20px;
-          line-height: 1.1;
-          background: linear-gradient(to bottom, #fff 40%, #94a3b8);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-          font-size: 1.3rem;
-          color: hsl(var(--fg-secondary));
-          margin-bottom: 50px;
-          line-height: 1.6;
-          max-width: 700px;
-        }
-
-        .hero-stats {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 30px;
-          width: 100%;
-          margin-bottom: 60px;
-        }
-
-        .stat-card {
-          padding: 30px;
-          border-radius: var(--radius);
-          text-align: center;
-        }
-
-        .stat-card h3 {
-          font-size: 2.2rem;
-          color: hsl(var(--brand-secondary));
-          margin-bottom: 5px;
-        }
-
-        .cta-button {
-          display: inline-block;
-          background-color: hsl(var(--brand-primary));
-          color: white;
-          border: none;
-          padding: 18px 50px;
-          font-size: 1.2rem;
-          font-weight: 700;
-          border-radius: 50px;
-          text-decoration: none;
-          box-shadow: 0 10px 40px hsla(var(--brand-primary) / 0.4);
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          cursor: pointer;
-        }
-
-        .cta-button:hover {
-          transform: scale(1.05);
-          box-shadow: 0 15px 50px hsla(var(--brand-primary) / 0.5);
-        }
-
-        .features-section {
-          margin-top: 150px;
-          padding-bottom: 100px;
-          width: 100%;
-          max-width: 1200px;
-          text-align: center;
-        }
-
-        .features-section h2 {
-          font-size: 2.5rem;
-          margin-bottom: 60px;
-        }
-
-        .features-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 30px;
-        }
-
-        .feature-card {
-          padding: 40px;
-          border-radius: var(--radius);
-          text-align: left;
-          transition: border-color 0.3s ease;
-          border: 1px solid transparent;
-        }
-
-        .feature-card:hover {
-          border-color: hsla(var(--brand-primary) / 0.3);
-        }
-
-        .feature-icon {
-          font-size: 2.5rem;
-          margin-bottom: 25px;
-        }
-
-        .feature-card h3 {
-          margin-bottom: 15px;
-          font-size: 1.5rem;
-        }
-
-        .feature-card p {
-          color: hsl(var(--fg-secondary));
-          line-height: 1.6;
-        }
-
-        @media (max-width: 900px) {
-          .features-grid { grid-template-columns: 1fr; }
-          .hero h1 { font-size: 3rem; }
-          .nav-links { display: none; }
+        @media (max-width: 1100px) {
+          .hero-section { grid-template-columns: 1fr; text-align: center; padding: 100px 20px; }
+          .hero-content { margin: 0 auto; }
+          .hero-content h1 { font-size: 50px; }
+          .hero-visual { display: none; }
+          .navbar { width: 90%; }
         }
       `}</style>
     </div>
