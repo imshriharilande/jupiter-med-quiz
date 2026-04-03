@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -24,8 +24,21 @@ export default function Home() {
 
   return (
     <div className="container">
+      {/* Dynamic Background */}
       <div className="glow-aura"></div>
-      <div className="glow-aura-secondary"></div>
+      <div className="particles-layer">
+        {[...Array(20)].map((_, i) => (
+          <div 
+            key={i} 
+            className="dna-particle" 
+            style={{ 
+              left: `${Math.random() * 100}%`, 
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`
+            }}
+          ></div>
+        ))}
+      </div>
 
       <nav className="liquid-glass navbar">
         <div className="brand neon-glow">JupiterMed</div>
@@ -49,34 +62,64 @@ export default function Home() {
 
       <section className="hero-section">
         <div className="hero-content">
-          <div className="social-proof">
-            <span className="stars">★★★★★</span>
-            Rated 4.9/5 by 2700+ medical students
+          <div className="trust-badges">
+            <span className="badge-item">👨‍⚕️ Built for MBBS Students</span>
+            <span className="badge-item">📊 1000+ High-Yield MCQs</span>
+            <span className="badge-item">⏱️ Real Exam Pattern</span>
           </div>
-          <h1>Work smarter, <br/>achieve faster</h1>
+          
+          <h1 className="hero-headline">Crack NEET PG with <br/><span className="text-neon">Smart Practice 🚀</span></h1>
+          
           <p className="hero-sub">
-            Effortlessly master your medical curriculum, collaborate with peers, and achieve your rank goals with our intuitive learning hub.
+            Practice high-yield MCQs, track your performance, and improve your rank with real exam-level quizzes. Master MBBS concepts with daily prep tools tailored for success.
           </p>
-          <div className="cta-group">
-            <button className="cta-primary pulse-primary" onClick={() => user ? window.location.href='/quiz' : setShowLogin(true)}>
-              Get Started Now <span className="icon">→</span>
+          
+          <div className="cta-row">
+            <button className="cta-btn btn-neon-gradient" onClick={() => user ? window.location.href='/quiz' : setShowLogin(true)}>
+              Start Free Quiz <span className="icon">→</span>
             </button>
-            {!user && <p className="cta-sub">Free for your first 50 MCQs. No credit card required.</p>}
+            <Link href="/quiz" className="cta-btn btn-glass">Explore Quizzes</Link>
+          </div>
+
+          <p className="cta-footer-note">🔒 Secure & Free Registration • No Credit Card Required</p>
+        </div>
+
+        {/* Floating UI Elements */}
+        <div className="floating-ui-layer">
+          <div className="ui-card glass float-card" style={{ top: '10%', right: '10%' }}>
+            <div className="card-icon">🎯</div>
+            <div className="card-data">
+              <strong>95% Accuracy</strong>
+              <span>Anatomy MCQ Pool</span>
+            </div>
+          </div>
+          <div className="ui-card glass float-card" style={{ bottom: '20%', right: '5%', animationDelay: '1s' }}>
+            <div className="card-icon">⚡</div>
+            <div className="card-data">
+              <strong>Rank #120</strong>
+              <span>Global Leaderboard</span>
+            </div>
+          </div>
+          <div className="ui-card glass float-card" style={{ top: '40%', right: '15%', animationDelay: '2.5s' }}>
+            <div className="card-icon">📊</div>
+            <div className="card-data">
+              <strong>128 Tests</strong>
+              <span>Completed This Week</span>
+            </div>
           </div>
         </div>
 
-        <div className="hero-visual">
-          <div className="orb-container">
-            <video 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
-              className="glassy-orb"
-            >
-              <source src="https://future.co/images/homepage/glassy-orb/orb-purple.webm" type="video/webm" />
-            </video>
-          </div>
+        {/* Background Visual (Electric Orb) */}
+        <div className="hero-visual-bg">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="glassy-orb-bg"
+          >
+            <source src="https://future.co/images/homepage/glassy-orb/orb-purple.webm" type="video/webm" />
+          </video>
         </div>
       </section>
 
@@ -93,8 +136,8 @@ export default function Home() {
         <div className="modal-overlay" onClick={() => setShowLogin(false)}>
           <div className="login-modal liquid-glass" onClick={e => e.stopPropagation()}>
             <button className="close-modal" onClick={() => setShowLogin(false)}>×</button>
-            <h3>Join JupiterMed</h3>
-            <p>Master your medical career started here.</p>
+            <h3>Sign Up Free</h3>
+            <p>Access 1000+ high-yield medical MCQs today.</p>
             <form onSubmit={handleLogin}>
               <input 
                 type="email" 
@@ -103,9 +146,18 @@ export default function Home() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <button type="submit" className="cta-primary w-full">Send Magic Link</button>
+              <button type="submit" className="cta-btn btn-neon-gradient w-full py-4">Get Magic link</button>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Mobile Sticky CTA */}
+      {!user && (
+        <div className="sticky-mobile-cta">
+          <button className="cta-btn btn-neon-gradient w-full py-4 text-center" onClick={() => setShowLogin(true)}>
+            Start Free Practice Now
+          </button>
         </div>
       )}
 
@@ -115,6 +167,30 @@ export default function Home() {
           max-width: 1600px;
           margin: 0 auto;
           position: relative;
+          min-height: 100vh;
+        }
+
+        .particles-layer {
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          overflow: hidden;
+        }
+
+        .dna-particle {
+          position: absolute;
+          width: 6px;
+          height: 6px;
+          background: var(--brand-neon);
+          border-radius: 50%;
+          opacity: 0.3;
+          animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+          from { transform: translateY(100vh) scale(1); opacity: 0; }
+          50% { opacity: 0.3; }
+          to { transform: translateY(-20vh) scale(1.5); opacity: 0; }
         }
 
         .navbar {
@@ -151,116 +227,149 @@ export default function Home() {
           transition: 0.2s;
         }
 
-        .nav-links :global(a):hover {
-          opacity: 1;
-        }
-
         .theme-toggle {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255,255,255,0.05);
           border: 1px solid var(--glass-stroke);
           border-radius: 8px;
           padding: 5px 10px;
           cursor: pointer;
-          font-size: 1.1rem;
         }
 
         .login-btn {
           background: var(--brand);
           color: white;
           padding: 8px 20px;
-          border-radius: 12px;
-          font-weight: 600;
+          border-radius: 50px;
+          font-weight: 700;
           border: none;
-          cursor: pointer;
         }
 
+        /* Hero Layout */
         .hero-section {
-          display: grid;
-          grid-template-columns: 1.2fr 1fr;
-          align-items: center;
           padding: 150px 60px;
-          min-height: 80vh;
+          min-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          position: relative;
         }
 
         .hero-content {
-          max-width: 700px;
+          max-width: 900px;
+          z-index: 10;
         }
 
-        .social-proof {
-          font-size: 0.9rem;
-          color: var(--fg-secondary);
-          margin-bottom: 25px;
+        .trust-badges {
           display: flex;
-          align-items: center;
-          gap: 10px;
+          justify-content: center;
+          gap: 15px;
+          margin-bottom: 30px;
+          flex-wrap: wrap;
         }
 
-        .stars {
-          color: #FF801E;
-          letter-spacing: 2px;
+        .badge-item {
+          padding: 8px 16px;
+          background: hsla(0, 0%, 100%, 0.05);
+          border: 1px solid hsla(0, 0%, 100%, 0.1);
+          border-radius: 50px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--fg-secondary);
         }
 
-        .hero-content h1 {
-          font-size: 75px;
+        .hero-headline {
+          font-size: 85px;
           line-height: 1.05;
           letter-spacing: -2px;
-          margin-bottom: 30px;
+          margin-bottom: 25px;
           font-weight: 800;
         }
 
+        .text-neon {
+          color: var(--brand-neon);
+          text-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        }
+
         .hero-sub {
-          font-size: 1.15rem;
+          font-size: 1.25rem;
           line-height: 1.6;
           color: var(--fg-secondary);
           margin-bottom: 50px;
-          letter-spacing: -0.5px;
+          max-width: 750px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
-        .cta-primary {
-          background-color: var(--brand);
-          color: white;
-          padding: 18px 40px;
-          border-radius: 16px;
+        .cta-row {
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+          margin-bottom: 20px;
+        }
+
+        .cta-btn {
+          padding: 18px 45px;
           font-size: 1.1rem;
-          font-weight: 700;
-          border: none;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+        }
+
+        .cta-footer-note {
+          font-size: 0.85rem;
+          color: var(--fg-secondary);
+          opacity: 0.7;
+        }
+
+        /* Floating UI */
+        .floating-ui-layer {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 5;
+        }
+
+        .ui-card {
+          position: absolute;
+          padding: 15px 25px;
+          border-radius: 20px;
           display: flex;
           align-items: center;
           gap: 15px;
-          cursor: pointer;
-          box-shadow: 0 10px 40px var(--brand-glow);
+          box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
-        .cta-sub {
-          font-size: 0.85rem;
-          color: var(--fg-secondary);
-          margin-top: 15px;
-        }
+        .card-icon { font-size: 1.5rem; }
+        .card-data { display: flex; flex-direction: column; text-align: left; }
+        .card-data strong { font-size: 1.1rem; color: var(--fg); }
+        .card-data span { font-size: 0.75rem; color: var(--fg-secondary); }
 
-        .hero-visual {
-          position: relative;
+        /* Orb Background */
+        .hero-visual-bg {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          opacity: 0.4;
           display: flex;
           justify-content: center;
+          align-items: center;
+          overflow: hidden;
+          pointer-events: none;
         }
 
-        .orb-container {
-          position: relative;
-          width: 600px;
-          height: 600px;
-        }
-
-        .glassy-orb {
-          width: 100%;
-          height: 100%;
+        .glassy-orb-bg {
+          width: 800px;
+          height: 800px;
           object-fit: cover;
           mix-blend-mode: screen;
-          filter: hue-rotate(-55deg) saturate(250%) brightness(1.2) contrast(1.1);
-          transform: scale(1.25);
+          filter: hue-rotate(-55deg) saturate(150%) brightness(0.8) contrast(1.1);
         }
 
         .logos-section {
-          margin-top: 50px;
-          padding: 80px 60px;
+          padding: 100px 60px;
           text-align: center;
         }
 
@@ -276,23 +385,23 @@ export default function Home() {
         .logos-grid {
           display: flex;
           justify-content: center;
-          gap: 100px;
-          opacity: 0.4;
+          gap: 80px;
+          opacity: 0.3;
           filter: grayscale(1);
+          flex-wrap: wrap;
         }
 
         .logo-placeholder {
-          font-size: 1.1rem;
+          font-size: 1.2rem;
           font-weight: 800;
-          letter-spacing: 1px;
         }
 
-        /* Modal Overhaul */
+        /* Modals */
         .modal-overlay {
           position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.4);
-          backdrop-filter: blur(10px);
+          inset: 0;
+          background: rgba(0,0,0,0.6);
+          backdrop-filter: blur(15px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -303,27 +412,32 @@ export default function Home() {
           width: 100%;
           max-width: 450px;
           padding: 50px;
-          border-radius: 24px;
+          border-radius: 30px;
           text-align: center;
         }
 
         .login-modal input {
           width: 100%;
-          padding: 16px;
+          padding: 18px;
           border-radius: 12px;
-          background: var(--bg);
+          background: rgba(255,255,255,0.05);
           border: 1px solid var(--glass-stroke);
-          color: var(--fg);
+          color: #fff;
           margin-bottom: 20px;
           font-family: inherit;
         }
 
+        .sticky-mobile-cta { display: none; }
+
         @media (max-width: 1100px) {
-          .hero-section { grid-template-columns: 1fr; text-align: center; padding: 100px 20px; }
-          .hero-content { margin: 0 auto; }
-          .hero-content h1 { font-size: 50px; }
-          .hero-visual { display: none; }
-          .navbar { width: 90%; }
+          .hero-headline { font-size: 50px; }
+          .hero-sub { font-size: 1.1rem; }
+          .cta-row { flex-direction: column; align-items: stretch; }
+          .floating-ui-layer, .hero-visual-bg { display: none; }
+          .navbar { width: 95%; gap: 10px; }
+          .brand { font-size: 1.2rem; }
+          .sticky-mobile-cta { display: block; }
+          .logos-grid { gap: 40px; }
         }
       `}</style>
     </div>
