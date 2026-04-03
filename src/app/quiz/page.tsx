@@ -1,18 +1,38 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/utils/supabaseClient';
 
-const SUBJECTS = [
-  { id: 'anatomy', name: 'Anatomy', icon: '🦴', count: '1,200 Qs' },
-  { id: 'physiology', name: 'Physiology', icon: '🫁', count: '950 Qs' },
-  { id: 'pathology', name: 'Pathology', icon: '🧬', count: '1,500 Qs' },
-  { id: 'pharmacology', name: 'Pharmacology', icon: '💊', count: '800 Qs' },
-  { id: 'microbiology', name: 'Microbiology', icon: '🦠', count: '1,100 Qs' },
-  { id: 'biochemistry', name: 'Biochemistry', icon: '🧪', count: '700 Qs' },
-];
+type Subject = {
+  id: string;
+  name: string;
+  icon: string;
+  question_count: number;
+};
 
 export default function QuizSelection() {
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSubjects() {
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (data) setSubjects(data);
+      if (error) console.error(error);
+      setLoading(false);
+    }
+    fetchSubjects();
+  }, []);
+
+  if (loading) {
+    return <div className="loading neon-glow">Loading subjects...</div>;
+  }
+
   return (
     <div className="quiz-container">
       <header className="quiz-header">
@@ -21,17 +41,25 @@ export default function QuizSelection() {
       </header>
 
       <div className="subjects-grid">
-        {SUBJECTS.map((subject) => (
+        {subjects.map((subject) => (
           <Link key={subject.id} href={`/quiz/${subject.id}`} className="subject-card glass">
             <div className="subject-icon">{subject.icon}</div>
             <h3>{subject.name}</h3>
-            <span>{subject.count}</span>
+            <span>{subject.question_count} Qs</span>
             <div className="start-arrow">→</div>
           </Link>
         ))}
       </div>
 
       <style jsx>{`
+        .loading {
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+        }
+
         .quiz-container {
           max-width: 1200px;
           margin: 60px auto;

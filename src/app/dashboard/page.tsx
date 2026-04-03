@@ -1,14 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Dashboard() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
+    return (
+      <div className="loading-container">
+        <div className="loader neon-glow">Loading your progress...</div>
+        <style jsx>{`
+          .loading-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
         <div>
-          <h1>Welcome back, Dr. Aditya</h1>
+          <h1>Welcome back, {user.email?.split('@')[0]}</h1>
           <p>You're in the top 5% of NEET PG aspirants this week!</p>
         </div>
         <div className="streak-badge neon-border">🔥 12 Day Streak</div>

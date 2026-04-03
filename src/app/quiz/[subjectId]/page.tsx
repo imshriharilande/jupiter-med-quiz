@@ -2,51 +2,63 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { supabase } from '@/utils/supabaseClient';
 
-const MOCK_QUESTIONS = [
-  {
-    id: 1,
-    question: 'Which of the following bones is the longest in the human body?',
-    options: ['Humerus', 'Femur', 'Tibia', 'Fibula'],
-    correct: 1,
-    explanation: 'The femur is the longest and strongest bone in the human body, extending from the hip to the knee.',
-  },
-  {
-    id: 2,
-    question: 'The anatomical term for the "kneecap" is:',
-    options: ['Scapula', 'Patella', 'Clavicle', 'Sternum'],
-    correct: 1,
-    explanation: 'The patella, also known as the kneecap, is a thick, circular-triangular bone which articulates with the femur and covers and protects the anterior articular surface of the knee joint.',
-  },
-];
+type Question = {
+  id: string;
+  question_text: string;
+  options: string[];
+  correct_option_index: number;
+  explanation: string;
+};
 
 export default function QuizEngine() {
   const params = useParams();
   const router = useRouter();
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [score, setScore] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (timeLeft > 0 && !isAnswered) {
+    async function fetchQuestions() {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('subject_id', params.subjectId);
+
+      if (data && data.length > 0) {
+        setQuestions(data);
+      } else {
+        // Fallback or error handling
+        console.warn('No questions found for this subject.');
+      }
+      setLoading(false);
+    }
+    if (params.subjectId) fetchQuestions();
+  }, [params.subjectId]);
+
+  useEffect(() => {
+    if (timeLeft > 0 && !isAnswered && !loading && questions.length > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     }
-  }, [timeLeft, isAnswered]);
+  }, [timeLeft, isAnswered, loading, questions]);
 
   const handleSelect = (idx: number) => {
     if (isAnswered) return;
     setSelected(idx);
     setIsAnswered(true);
-    if (idx === MOCK_QUESTIONS[currentQ].correct) {
+    if (idx === questions[currentQ].correct_option_index) {
       setScore(score + 100);
     }
   };
 
   const handleNext = () => {
-    if (currentQ < MOCK_QUESTIONS.length - 1) {
+    if (currentQ < questions.length - 1) {
       setCurrentQ(currentQ + 1);
       setSelected(null);
       setIsAnswered(false);
@@ -56,27 +68,30 @@ export default function QuizEngine() {
     }
   };
 
-  const currentQuestion = MOCK_QUESTIONS[currentQ];
+  if (loading) return <div className="loader glass neon-glow">Loading Question Pool...</div>;
+  if (questions.length === 0) return <div className="error glass">No questions available for this subject yet.</div>;
+
+  const currentQuestion = questions[currentQ];
 
   return (
     <div className="quiz-engine-container">
       <div className="quiz-status glass">
         <div className="progress-info">
-          <span>Question {currentQ + 1} of {MOCK_QUESTIONS.length}</span>
+          <span>Question {currentQ + 1} of {questions.length}</span>
           <div className="timer-box neon-glow">⏱ {timeLeft}s</div>
         </div>
         <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${((currentQ + 1) / MOCK_QUESTIONS.length) * 100}%` }}></div>
+          <div className="progress-fill" style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}></div>
         </div>
       </div>
 
       <div className="question-card glass">
-        <h2>{currentQuestion.question}</h2>
+        <h2>{currentQuestion.question_text}</h2>
         <div className="options-list">
           {currentQuestion.options.map((option, idx) => {
             let className = 'option-item glass';
             if (isAnswered) {
-              if (idx === currentQuestion.correct) className += ' correct';
+              if (idx === currentQuestion.correct_option_index) className += ' correct';
               else if (idx === selected) className += ' wrong';
             } else if (selected === idx) {
               className += ' active';
@@ -95,13 +110,21 @@ export default function QuizEngine() {
             <h4>Explanation:</h4>
             <p>{currentQuestion.explanation}</p>
             <button className="next-btn" onClick={handleNext}>
-              {currentQ === MOCK_QUESTIONS.length - 1 ? 'Finish' : 'Next Question →'}
+              {currentQ === questions.length - 1 ? 'Finish' : 'Next Question →'}
             </button>
           </div>
         )}
       </div>
 
       <style jsx>{`
+        .loader, .error {
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+        }
+
         .quiz-engine-container {
           max-width: 800px;
           margin: 40px auto;

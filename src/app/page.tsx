@@ -1,9 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
+  const { user, signIn, signOut } = useAuth();
+  const [email, setEmail] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await signIn(email);
+      setShowLogin(false);
+    } catch (error) {
+      console.error(error);
+      alert('Error signing in');
+    }
+  };
+
   return (
     <div className="container">
       <nav className="glass">
@@ -12,12 +28,39 @@ export default function Home() {
           <Link href="/quiz">Quizzes</Link>
           <Link href="/leaderboard">Leaderboard</Link>
           <Link href="/guidance">Guidance</Link>
-          <button className="login-btn neon-border">Login</button>
+          {user ? (
+            <div className="user-profile">
+              <Link href="/dashboard" className="nav-user">Dashboard</Link>
+              <button onClick={signOut} className="logout-link">Logout</button>
+            </div>
+          ) : (
+            <button className="login-btn neon-border" onClick={() => setShowLogin(true)}>Login</button>
+          )}
         </div>
       </nav>
 
+      {showLogin && (
+        <div className="modal-overlay">
+          <div className="login-modal glass neon-border">
+            <button className="close-modal" onClick={() => setShowLogin(false)}>×</button>
+            <h3>Sign In to JupiterMed</h3>
+            <p>Enter your email to receive a magic login link.</p>
+            <form onSubmit={handleLogin}>
+              <input 
+                type="email" 
+                placeholder="doctor@medical.edu" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button type="submit" className="cta-button">Send Link</button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <section className="hero">
-        <div className="badge neon-border">🚀 Next-Gen Learning</div>
+        <div className="badge neon-border">🚀 {user ? 'Welcome Back!' : 'Next-Gen Learning'}</div>
         <h1 className="neon-glow">Master Your Medical Career</h1>
         <p>The high-performance learning ecosystem for MBBS & NEET PG aspirants. Topic-wise practice, live tests, and AI-driven insights.</p>
         
@@ -36,8 +79,8 @@ export default function Home() {
           </div>
         </div>
 
-        <Link href="/quiz" className="cta-button">
-          Start Free Quiz
+        <Link href={user ? "/quiz" : "/quiz"} className="cta-button">
+          {user ? "Continue Your Practice" : "Start Free Quiz"}
         </Link>
       </section>
 
@@ -96,14 +139,25 @@ export default function Home() {
           align-items: center;
         }
 
-        .nav-links :global(a) {
+        .nav-links :global(a), .nav-user {
           color: hsl(var(--fg-secondary));
           font-weight: 500;
           text-decoration: none;
         }
 
-        .nav-links :global(a):hover {
-          color: hsl(var(--fg-primary));
+        .user-profile {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .logout-link {
+          background: transparent;
+          border: none;
+          color: hsl(var(--error));
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 0.9rem;
         }
 
         .login-btn {
@@ -112,6 +166,58 @@ export default function Home() {
           border-radius: 50px;
           padding: 8px 25px;
           font-weight: 600;
+          cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          backdrop-filter: blur(5px);
+        }
+
+        .login-modal {
+          padding: 40px;
+          width: 100%;
+          max-width: 400px;
+          text-align: center;
+          position: relative;
+        }
+
+        .close-modal {
+          position: absolute;
+          top: 15px; right: 15px;
+          background: transparent;
+          border: none;
+          color: hsl(var(--fg-secondary));
+          font-size: 1.5rem;
+          cursor: pointer;
+        }
+
+        .login-modal h3 {
+          font-size: 1.8rem;
+          margin-bottom: 5px;
+        }
+
+        .login-modal p {
+          color: hsl(var(--fg-secondary));
+          margin-bottom: 30px;
+        }
+
+        .login-modal input {
+          width: 100%;
+          padding: 15px;
+          border-radius: var(--radius);
+          background: hsla(var(--bg-secondary) / 0.5);
+          border: 1px solid hsla(var(--fg-primary) / 0.1);
+          color: white;
+          margin-bottom: 20px;
+          font-family: inherit;
         }
 
         .hero {
@@ -171,6 +277,7 @@ export default function Home() {
         }
 
         .cta-button {
+          display: inline-block;
           background-color: hsl(var(--brand-primary));
           color: white;
           border: none;
@@ -181,6 +288,7 @@ export default function Home() {
           text-decoration: none;
           box-shadow: 0 10px 40px hsla(var(--brand-primary) / 0.4);
           transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          cursor: pointer;
         }
 
         .cta-button:hover {
