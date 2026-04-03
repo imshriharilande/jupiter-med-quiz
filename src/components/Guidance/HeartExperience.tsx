@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useScroll, ScrollControls, Scroll, Float, PerspectiveCamera, MeshDistortMaterial, Text, Backdrop, Sphere, Cylinder, MeshPhysicalMaterial } from '@react-three/drei';
+import { useScroll, ScrollControls, Scroll, Float, PerspectiveCamera, MeshDistortMaterial, Text, Backdrop, Sphere, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 import { Bloom, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 
@@ -85,7 +85,7 @@ function HeartModel({ scroll }: { scroll: any }) {
         onPointerOver={() => setHovered('aorta')}
         onPointerOut={() => setHovered(null)}
       >
-        <MeshPhysicalMaterial 
+        <meshPhysicalMaterial 
           color={hovered === 'aorta' ? "#00f2ff" : "#8a1212"} 
           transmission={0.8} 
           thickness={1} 
