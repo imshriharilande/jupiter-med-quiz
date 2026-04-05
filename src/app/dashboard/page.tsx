@@ -17,267 +17,208 @@ export default function Dashboard() {
 
   if (loading || !user) {
     return (
-      <div className="loading-container">
-        <div className="loader neon-glow">Loading your progress...</div>
+      <div className="dashboard-loader">
+        <div className="neon-text animate-pulse">Syncing Doctor Profile...</div>
         <style jsx>{`
-          .loading-container {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-          }
+          .dashboard-loader { height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; }
         `}</style>
       </div>
     );
   }
 
+  const SUBJECT_STATS = [
+    { name: 'Anatomy', score: 92, status: 'Mastered' },
+    { name: 'Physiology', score: 78, status: 'Review Needed' },
+    { name: 'Biochemistry', score: 85, status: 'Stable' },
+    { name: 'Pathology', score: 64, status: 'Critical Area' },
+  ];
+
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-layout animate-fade">
       <header className="dashboard-header">
-        <div>
-          <h1>Welcome back, {user.email?.split('@')[0]}</h1>
-          <p>You're in the top 5% of NEET PG aspirants this week!</p>
+        <div className="user-intro">
+          <h1>Welcome, <span className="neon-text">Dr. {user.email?.split('@')[0]}</span></h1>
+          <p>Your diagnostic performance report is ready for review.</p>
         </div>
-        <div className="streak-badge neon-border">🔥 12 Day Streak</div>
+        <div className="header-badges">
+          <div className="streak-badge glass">🔥 14 Day Streak</div>
+          <div className="rank-badge glass">🎖️ Global Rank: #412</div>
+        </div>
       </header>
 
-      <div className="stats-grid">
-        <div className="stat-card glass">
-          <div className="stat-label">Overall Accuracy</div>
-          <div className="stat-value neon-glow">84%</div>
-          <div className="stat-delta positive">↑ 4% this month</div>
+      <div className="stats-overview">
+        <div className="stat-card glass-card">
+          <span className="sc-label">Average Accuracy</span>
+          <h2 className="sc-value neon-text">84%</h2>
+          <span className="sc-delta text-success">↑ 12% this week</span>
         </div>
-        <div className="stat-card glass">
-          <div className="stat-label">Quizzes Completed</div>
-          <div className="stat-value neon-glow">128</div>
-          <div className="stat-delta">Keep it up!</div>
+        <div className="stat-card glass-card">
+          <span className="sc-label">MCQs Practiced</span>
+          <h2 className="sc-value">1,420</h2>
+          <span className="sc-delta">Total attempts</span>
         </div>
-        <div className="stat-card glass">
-          <div className="stat-label">Current Rank</div>
-          <div className="stat-value neon-glow">#412</div>
-          <div className="stat-delta positive">↑ 120 positions</div>
+        <div className="stat-card glass-card">
+          <span className="sc-label">Time Per Q</span>
+          <h2 className="sc-value">42s</h2>
+          <span className="sc-delta text-warning">Optimize for NEET PG</span>
         </div>
       </div>
 
-      <div className="main-content">
-        <div className="chart-section glass">
-          <h3>Subject Performance</h3>
-          <div className="bar-chart">
-            {[
-              { name: 'Anatomy', val: 90 },
-              { name: 'Physiology', val: 75 },
-              { name: 'Pathology', val: 82 },
-              { name: 'Pharmacol', val: 68 },
-              { name: 'Microbio', val: 95 },
-            ].map((s) => (
-              <div key={s.name} className="chart-item">
-                <div className="bar-wrapper">
-                  <div className="bar-fill" style={{ height: `${s.val}%` }}>
-                    <span className="bar-tooltip">{s.val}%</span>
-                  </div>
-                </div>
-                <span className="bar-label">{s.name}</span>
-              </div>
-            ))}
+      <div className="dashboard-grid">
+        {/* Performance Visualization */}
+        <section className="chart-section glass-card">
+          <div className="section-title">
+            <h3>Subject Proficiency</h3>
+            <span className="text-muted">Live diagnostic analytics</span>
           </div>
-        </div>
+          
+          <div className="radar-chart-placeholder">
+            {/* Custom SVG Performance Chart */}
+            <svg viewBox="0 0 400 300" className="w-full">
+              {SUBJECT_STATS.map((s, i) => (
+                <g key={s.name}>
+                  <rect 
+                    x="80" 
+                    y={40 + i*60} 
+                    width="280" 
+                    height="12" 
+                    rx="6" 
+                    fill="hsla(0,0%,100%,0.05)" 
+                  />
+                  <rect 
+                    x="80" 
+                    y={40 + i*60} 
+                    width={(s.score/100) * 280} 
+                    height="12" 
+                    rx="6" 
+                    fill={`hsl(${i*40 + 199} 89% 48%)`}
+                    className="animate-bar"
+                  />
+                  <text x="0" y={50 + i*60} fill="white" className="label-text">{s.name}</text>
+                  <text x="370" y={50 + i*60} fill="white" textAnchor="end" className="score-text">{s.score}%</text>
+                </g>
+              ))}
+            </svg>
+          </div>
+        </section>
 
-        <div className="recent-activity glass">
-          <h3>Recent Attempts</h3>
-          <div className="activity-list">
-            {[
-              { subj: 'Anatomy', date: 'Today', score: '18/20' },
-              { subj: 'Physiology', date: 'Yesterday', score: '15/20' },
-              { subj: 'Biochemistry', date: '2 days ago', score: '19/20' },
-            ].map((a, i) => (
-              <div key={i} className="activity-item">
-                <div className="subj-info">
-                  <strong>{a.subj}</strong>
-                  <span>{a.date}</span>
-                </div>
-                <div className="subj-score neon-glow">{a.score}</div>
-              </div>
-            ))}
+        {/* Diagnostic Insights */}
+        <section className="insight-section">
+          <div className="glass-card insight-box warning">
+            <div className="i-header">
+              <span className="i-icon">⚠️</span>
+              <h4>Critical Focus: Pathology</h4>
+            </div>
+            <p>Your accuracy in 'General Pathology' has dipped below 65%. We recommend a targeted session today.</p>
+            <Link href="/quiz/pathology" className="inline-action">Start Targeted Quiz →</Link>
           </div>
-          <Link href="/quiz" className="new-quiz-btn neon-border">Take a New Quiz</Link>
-        </div>
+
+          <div className="recent-activity glass-card">
+            <h3>Session History</h3>
+            <div className="activity-list">
+              {[
+                { subj: 'Anatomy', date: 'Jul 12', score: '18/20' },
+                { subj: 'Biochemistry', date: 'Jul 10', score: '15/20' },
+                { subj: 'Physiology', date: 'Jul 08', score: '19/20' },
+              ].map((a, i) => (
+                <div key={i} className="activity-item">
+                  <div className="a-info">
+                    <strong>{a.subj}</strong>
+                    <span>{a.date}</span>
+                  </div>
+                  <span className="a-score neon-text">{a.score}</span>
+                </div>
+              ))}
+            </div>
+            <Link href="/quiz" className="neon-btn w-full block-center">Explore All Subjects</Link>
+          </div>
+        </section>
       </div>
 
       <style jsx>{`
-        .dashboard-container {
+        .dashboard-layout {
           max-width: 1200px;
-          margin: 60px auto;
-          padding: 0 20px;
+          margin: 120px auto 100px;
+          padding: 0 40px;
         }
 
         .dashboard-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 50px;
+          margin-bottom: 60px;
+          gap: 20px;
         }
 
-        .dashboard-header h1 {
-          font-size: 2.2rem;
-          margin-bottom: 5px;
-        }
+        .dashboard-header h1 { font-size: 2.8rem; margin-bottom: 8px; }
+        .dashboard-header p { color: hsl(var(--fg-secondary)); font-size: 1.15rem; }
 
-        .dashboard-header p {
-          color: hsl(var(--fg-secondary));
-        }
+        .header-badges { display: flex; gap: 15px; }
+        .header-badges > div { padding: 8px 18px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; }
 
-        .streak-badge {
-          padding: 8px 15px;
-          border-radius: 50px;
-          font-weight: 700;
-          color: hsl(var(--warning));
-          background: hsla(var(--warning) / 0.1);
-        }
-
-        .stats-grid {
+        .stats-overview {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 25px;
           margin-bottom: 50px;
         }
 
-        .stat-card {
-          padding: 30px;
-          border-radius: var(--radius);
-        }
+        .sc-label { color: hsl(var(--fg-muted)); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 15px; }
+        .sc-value { font-size: 3rem; font-weight: 800; margin-bottom: 5px; }
+        .sc-delta { font-size: 0.85rem; font-weight: 600; }
+        .text-success { color: hsl(var(--success)); }
+        .text-warning { color: hsl(var(--warning)); }
 
-        .stat-label {
-          color: hsl(var(--fg-secondary));
-          font-size: 0.9rem;
-          margin-bottom: 10px;
-        }
-
-        .stat-value {
-          font-size: 2.5rem;
-          font-weight: 700;
-          margin-bottom: 5px;
-        }
-
-        .stat-delta {
-          font-size: 0.85rem;
-          color: hsl(var(--fg-secondary));
-        }
-
-        .stat-delta.positive {
-          color: hsl(var(--success));
-        }
-
-        .main-content {
+        .dashboard-grid {
           display: grid;
-          grid-template-columns: 1.5fr 1fr;
+          grid-template-columns: 1.6fr 1fr;
           gap: 25px;
+          align-items: start;
         }
 
-        .chart-section, .recent-activity {
-          padding: 30px;
-          border-radius: var(--radius);
-          display: flex;
-          flex-direction: column;
+        .section-title { margin-bottom: 40px; }
+        .section-title h3 { font-size: 1.6rem; }
+        .text-muted { color: hsl(var(--fg-muted)); font-size: 0.9rem; }
+
+        .label-text { font-size: 0.8rem; font-weight: 600; opacity: 0.7; }
+        .score-text { font-size: 0.9rem; font-weight: 800; }
+
+        .animate-bar {
+          animation: fillBar 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          transform-origin: left;
         }
 
-        .chart-section h3, .recent-activity h3 {
-          margin-bottom: 30px;
+        @keyframes fillBar {
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
         }
 
-        .bar-chart {
-          display: flex;
-          justify-content: space-around;
-          align-items: flex-end;
-          height: 300px;
-          padding: 0 20px;
-        }
+        .insight-section { display: flex; flex-direction: column; gap: 25px; }
 
-        .chart-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          height: 100%;
-          gap: 15px;
-        }
+        .insight-box { padding: 30px; border-radius: 20px; }
+        .insight-box.warning { border-color: hsla(var(--warning) / 0.3); background: hsla(var(--warning) / 0.05); }
 
-        .bar-wrapper {
-          width: 40px;
-          height: 100%;
-          background: hsla(var(--fg-primary) / 0.05);
-          border-radius: 20px;
-          position: relative;
-          display: flex;
-          align-items: flex-end;
-        }
+        .i-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .i-header h4 { font-size: 1.2rem; font-weight: 800; }
+        .insight-box p { color: hsl(var(--fg-secondary)); line-height: 1.6; margin-bottom: 20px; }
+        
+        .inline-action { color: hsl(var(--warning)); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
 
-        .bar-fill {
-          width: 100%;
-          background: linear-gradient(180deg, hsl(var(--brand-primary)), hsl(var(--brand-secondary)));
-          border-radius: 20px;
-          position: relative;
-        }
+        .recent-activity { padding: 30px; }
+        .activity-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; }
+        .activity-item { display: flex; justify-content: space-between; align-items: center; }
+        .a-info { display: flex; flex-direction: column; }
+        .a-info strong { font-size: 1rem; }
+        .a-info span { font-size: 0.8rem; color: hsl(var(--fg-muted)); }
+        .a-score { font-weight: 800; font-size: 1.1rem; }
 
-        .bar-tooltip {
-          position: absolute;
-          top: -25px;
-          left: 50%;
-          transform: translateX(-50%);
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: hsl(var(--brand-primary));
-        }
+        .block-center { width: 100%; text-align: center; }
 
-        .bar-label {
-          font-size: 0.8rem;
-          color: hsl(var(--fg-secondary));
-        }
-
-        .activity-list {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          margin-bottom: 30px;
-        }
-
-        .activity-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .subj-info {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .subj-info strong {
-          color: hsl(var(--fg-primary));
-        }
-
-        .subj-info span {
-          color: hsl(var(--fg-secondary));
-          font-size: 0.8rem;
-        }
-
-        .subj-score {
-          font-weight: 700;
-          color: hsl(var(--brand-primary));
-        }
-
-        .new-quiz-btn {
-          margin-top: auto;
-          padding: 15px;
-          text-align: center;
-          border-radius: var(--radius);
-          text-decoration: none;
-          color: hsl(var(--brand-primary));
-          font-weight: 600;
-        }
-
-        @media (max-width: 900px) {
-          .main-content { grid-template-columns: 1fr; }
-          .stats-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1000px) {
+          .dashboard-grid { grid-template-columns: 1fr; }
+          .stats-overview { grid-template-columns: 1fr; }
+          .dashboard-header { flex-direction: column; align-items: flex-start; }
+          .dashboard-layout { padding: 0 20px; }
         }
       `}</style>
     </div>
