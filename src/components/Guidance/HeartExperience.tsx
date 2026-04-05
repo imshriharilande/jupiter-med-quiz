@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useScroll, ScrollControls, Scroll, Float, PerspectiveCamera, MeshDistortMaterial, Text, Backdrop, Sphere, Cylinder } from '@react-three/drei';
+import { useScroll, ScrollControls, Scroll, Float, PerspectiveCamera, MeshDistortMaterial, Text, Sphere, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 import { Bloom, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 
 // 🫀 The Procedural Heart Component
-function HeartModel({ scroll }: { scroll: any }) {
+function HeartModel() {
+  const scroll = useScroll();
   const heartGroup = useRef<THREE.Group>(null);
   const leftHalf = useRef<THREE.Group>(null);
   const rightHalf = useRef<THREE.Group>(null);
@@ -25,15 +26,15 @@ function HeartModel({ scroll }: { scroll: any }) {
   useFrame((state) => {
     const r = scroll.offset; // 0 to 1
     
-    // 1. Biological Beating (Sinusoidal independent of scroll)
+    // 1. Biological Beating
     const beat = 1 + Math.sin(state.clock.elapsedTime * 6) * 0.02;
     if (heartGroup.current) heartGroup.current.scale.set(beat, beat, beat);
 
-    // 2. Phase 1-2: Approach (0 - 30%)
+    // 2. Approach
     const approachScale = 1 + r * 2;
     if (heartGroup.current) heartGroup.current.scale.multiplyScalar(approachScale);
 
-    // 3. Phase 3: Dissection (30 - 50%)
+    // 3. Dissection
     if (r > 0.3 && r < 0.8) {
       const split = (r - 0.3) * 5;
       if (leftHalf.current) leftHalf.current.position.x = -split;
@@ -43,7 +44,7 @@ function HeartModel({ scroll }: { scroll: any }) {
       if (rightHalf.current) rightHalf.current.position.x = 0;
     }
 
-    // 4. Phase 4: The Dive (50 - 80%)
+    // 4. Dive
     const diveZ = r > 0.5 ? (r - 0.5) * 40 : 0;
     state.camera.position.z = 10 - diveZ;
     state.camera.lookAt(0, 0, 0);
@@ -51,11 +52,9 @@ function HeartModel({ scroll }: { scroll: any }) {
 
   return (
     <group ref={heartGroup}>
-      {/* Cinematic Rim Lighting */}
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#ff0000" />
       <pointLight position={[-10, -10, -10]} intensity={1} color="#00ffff" />
 
-      {/* Dissectable Halves */}
       <group ref={leftHalf}>
         <Sphere args={[2, 64, 64]} position={[-0.5, 0, 0]} onClick={() => setSelection(PATHOLOGY_DATA.ventricles)} onPointerOver={() => setHovered('ventricles')} onPointerOut={() => setHovered(null)}>
           <MeshDistortMaterial 
@@ -75,7 +74,6 @@ function HeartModel({ scroll }: { scroll: any }) {
         </Sphere>
       </group>
 
-      {/* The Aorta Hotspot */}
       <Cylinder 
         ref={aorta}
         args={[0.6, 0.4, 4, 32]} 
@@ -92,7 +90,6 @@ function HeartModel({ scroll }: { scroll: any }) {
         />
       </Cylinder>
 
-      {/* Interactive Overlay UI */}
       {selection && (
         <Scroll html>
           <div className="pathology-modal glass liquid-glass">
@@ -110,7 +107,6 @@ function HeartModel({ scroll }: { scroll: any }) {
         </Scroll>
       )}
 
-      {/* Floating 3D Typography */}
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
         <Text
           position={[5, 4, -10]}
@@ -135,7 +131,7 @@ export default function HeartExperience() {
         
         <ambientLight intensity={0.5} />
         <ScrollControls pages={4} damping={0.2}>
-          <HeartModel scroll={useScroll()} />
+          <HeartModel />
           
           <Scroll html>
             <div className="story-layer">

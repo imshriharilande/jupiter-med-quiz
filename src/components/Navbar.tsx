@@ -29,7 +29,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`navbar ${scrolled ? 'scrolled glass' : ''}`}>
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''} glass`}>
         <div className="nav-container">
           <Link href="/" className="brand neon-text">
             JupiterMed <span className="text-white">Quiz</span>
@@ -58,7 +58,7 @@ export default function Navbar() {
 
       {showLogin && (
         <div className="modal-overlay" onClick={() => setShowLogin(false)}>
-          <div className="login-modal glass animate-fade" onClick={e => e.stopPropagation()}>
+          <div className="login-modal glass liquid-glass" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setShowLogin(false)}>×</button>
             <h2 className="neon-text">Medical Access</h2>
             <p className="text-secondary">Enter your email to receive your magic entry link.</p>
@@ -84,12 +84,15 @@ export default function Navbar() {
           left: 0;
           right: 0;
           padding: 20px 0;
-          z-index: 1000;
+          z-index: 9999;
           transition: all 0.3s ease;
+          background: hsla(0, 0%, 0%, 0.1);
+          backdrop-filter: blur(8px);
         }
 
         .navbar.scrolled {
           padding: 12px 0;
+          background: hsla(0, 0%, 0%, 0.4);
           border-bottom: 1px solid var(--glass-border);
         }
 
@@ -166,7 +169,7 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 2000;
+          z-index: 10000;
         }
 
         .login-modal {
@@ -223,6 +226,6 @@ export default function Navbar() {
           .nav-links { display: none; }
         }
       `}</style>
-    </<>
+    </>
   );
 }
